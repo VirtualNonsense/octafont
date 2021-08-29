@@ -3,12 +3,6 @@ from bitarray import bitarray
 from os import listdir, makedirs
 from os.path import realpath, dirname, join, isfile, basename, splitext, exists
 
-here = dirname(realpath(__file__))
-input_dir = join(here, "pixeldata")
-input_files = [join(input_dir, f) for f in listdir(input_dir) if isfile(join(input_dir, f)) and f.lower().endswith(".png")]
-
-if not exists('output'):
-    makedirs('output')
 
 
 def extract_pixel_data(img, marker_line):
@@ -113,65 +107,74 @@ def print_char(img, bounds, variant, v):
         print("No character data.")
 
 
-for input_file in input_files:
+if __name__ == '__main__':
+    here = dirname(realpath(__file__))
+    input_dir = join(here, "pixeldata")
+    input_files = [join(input_dir, f) for f in listdir(input_dir) if
+                   isfile(join(input_dir, f)) and f.lower().endswith(".png")]
 
-    img = Image.open(input_file)
-    font_name = splitext(basename(input_file))[0].capitalize()
+    if not exists('output'):
+        makedirs('output')
 
-    variants = [
-        {"name": "Regular", "marker_line": 9, "y_pos": 10},
-        {"name": "Bold", "marker_line": 0, "y_pos": 1}
-    ]
+    for input_file in input_files:
 
-    for v in variants:
-        bounds = extract_pixel_data(img, v["marker_line"])
-        variant = v["name"]
-        (jumps, widths, chars) = build_tables(img, bounds, v["y_pos"])
+        img = Image.open(input_file)
+        font_name = splitext(basename(input_file))[0].capitalize()
 
-        #print_char(img, bounds, v, 0xdf)
+        variants = [
+            {"name": "Regular", "marker_line": 9, "y_pos": 10},
+            {"name": "Bold", "marker_line": 0, "y_pos": 1}
+        ]
 
-        h_file = f"""#ifndef {font_name.upper()}_{variant.upper()}_H_
-    #define {font_name.upper()}_{variant.upper()}_H_
-    
-    #include "pixelfont.h"
-    
-    class {font_name}{variant} : public PixelFont {{
-    
-    private:
-        static const uint8_t chars[];
-        static const int jumps[];
-        static const int widths[];
-    
-        const uint8_t* get_chars() override {{
-            return chars;
-        }}
-    
-        const int* get_jumps() override {{
-            return jumps;
-        }}
-    
-        const int* get_widths() override {{
-            return widths;
-        }}
-    }};
-    
-    const uint8_t {font_name}{variant}::chars[] = {{
-    {chars}
-    }};
-    
-    const int {font_name}{variant}::jumps[] = {{
-    {jumps}
-    }};
-    
-    const int {font_name}{variant}::widths[] = {{
-    {widths}
-    }};
-    
-    #endif //{font_name.upper()}_{variant.upper()}_H_
-    """
-        output_file = join(here, "output", font_name.lower() + f"-{variant.lower()}.h")
-        print(basename(input_file) + " -> " + basename(output_file))
+        for v in variants:
+            bounds = extract_pixel_data(img, v["marker_line"])
+            variant = v["name"]
+            (jumps, widths, chars) = build_tables(img, bounds, v["y_pos"])
 
-        f = open(output_file, "w")
-        f.write(h_file)
-        f.close()
+            #print_char(img, bounds, v, 0xdf)
+
+            h_file = f"""#ifndef {font_name.upper()}_{variant.upper()}_H_
+        #define {font_name.upper()}_{variant.upper()}_H_
+        
+        #include "pixelfont.h"
+        
+        class {font_name}{variant} : public PixelFont {{
+        
+        private:
+            static const uint8_t chars[];
+            static const int jumps[];
+            static const int widths[];
+        
+            const uint8_t* get_chars() override {{
+                return chars;
+            }}
+        
+            const int* get_jumps() override {{
+                return jumps;
+            }}
+        
+            const int* get_widths() override {{
+                return widths;
+            }}
+        }};
+        
+        const uint8_t {font_name}{variant}::chars[] = {{
+        {chars}
+        }};
+        
+        const int {font_name}{variant}::jumps[] = {{
+        {jumps}
+        }};
+        
+        const int {font_name}{variant}::widths[] = {{
+        {widths}
+        }};
+        
+        #endif //{font_name.upper()}_{variant.upper()}_H_
+        """
+            output_file = join(here, "output", font_name.lower() + f"-{variant.lower()}.h")
+            print(basename(input_file) + " -> " + basename(output_file))
+
+            f = open(output_file, "w")
+            f.write(h_file)
+            f.close()

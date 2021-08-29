@@ -52,7 +52,7 @@ if __name__ == '__main__':
         "/usr/share/fonts/truetype/ttf-bitstream-vera/VeraMoBd.ttf",
     ]
     font_sizes = [
-        5, 6, 7,
+        5,
     ]
     letter_spacing = 2
 
@@ -81,7 +81,7 @@ if __name__ == '__main__':
             former_letters_width = 0
             for char in letters:
                 drawn_image.text(xy=(former_letters_width, 1), text=char, font=font, fill="black")
-                drawn_image.point((former_letters_width, 0), (0, 255, 0,))
+                drawn_image.point((former_letters_width, 0), (255, 0, 0,))
                 former_letters_width += get_text_dimensions(char, font)[0] + letter_spacing
-                drawn_image.point((former_letters_width - letter_spacing - 1, 0), (255, 0, 0,))
+                drawn_image.point((former_letters_width - letter_spacing - 1, 0), (0, 255, 0,))
             img.save(join(here, output_dir, f"{splitext(font_name)[0].split('/')[-1]}{font_size}.png"))

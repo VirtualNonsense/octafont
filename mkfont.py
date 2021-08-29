@@ -129,24 +129,6 @@ def get_char_mapping(v):
     return -1
 
 
-#
-# def print_char(img, bounds, variant):
-#     index = get_char_mapping(0xdf)
-#
-#     if index != -1:
-#         (start, end) = bounds[index]
-#
-#         for y in range(variant["y_pos"], variant["y_pos"] + 8):
-#             for x in range(start, end + 1):
-#                 p = img.getpixel((x, y))
-#                 if p == (0, 0, 0):
-#                     print("x", end='')
-#                 else:
-#                     print(" ", end='')
-#             print("")
-#     else:
-#         print("No character data.")
-
 
 if __name__ == '__main__':
     here = dirname(realpath(__file__))

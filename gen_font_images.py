@@ -1,3 +1,5 @@
+import os
+
 from PIL import Image, ImageDraw, ImageFont
 from os import listdir, makedirs
 from os.path import realpath, dirname, join, isfile, basename, splitext, exists
@@ -42,32 +44,44 @@ def binarize(image_to_transform, threshold):
 if __name__ == '__main__':
     here = dirname(realpath(__file__))
     input_dir = join(here, "input")
-    output_dir = "output"
+    output_dir = "input"
     if not exists(output_dir):
         makedirs(output_dir)
+    fonts = [
+        "/usr/share/fonts/truetype/liberation/LiberationMono-Regular.ttf",
+        "/usr/share/fonts/truetype/ttf-bitstream-vera/VeraMoBd.ttf",
+    ]
+    font_sizes = [
+        5, 6, 7,
+    ]
+    letter_spacing = 2
 
-    font_name = "/usr/share/fonts/opentype/fira/FiraMono-Regular.otf"
-    font_size = 20
+    sharp_edges = True
 
-    # define letters to draw
-    letters = r" !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvxyz"
+    for font_name in fonts:
+        for font_size in font_sizes:
 
-    # script
-    font = ImageFont.truetype(font_name, font_size)
-    height = 0
-    width = 0
-    for char in letters:
-        dim = get_text_dimensions(char, font)
-        width += dim[0]
-        if height < dim[1]:
-            height = dim[1]
-    img = Image.new("RGB", (width, height), color="white")
-    drawn_image = ImageDraw.Draw(img)
-    drawn_image.fontmode = "1"
-    former_letters_width = 0
-    for char in letters:
-        drawn_image.text(xy=(former_letters_width, 0), text=char, font=font, fill="black")
-        drawn_image.point((former_letters_width, 0), (0, 255, 0,))
-        former_letters_width += get_text_dimensions(char, font)[0]
-        drawn_image.point((former_letters_width - 1, 0), (255, 0, 0,))
-    img.save(join(here, output_dir, f"{splitext(font_name)[0].split('/')[-1]}{font_size}.png"))
+            # define letters to draw
+            letters = r" !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvxyz"
+
+            # script
+            font = ImageFont.truetype(font_name, font_size)
+            height = 0
+            width = 0
+            for char in letters:
+                dim = get_text_dimensions(char, font)
+                width += dim[0] + letter_spacing
+                if height < dim[1]:
+                    height = dim[1]
+            # +1 for guide row
+            img = Image.new("RGB", (width, height + 1), color="white")
+            drawn_image = ImageDraw.Draw(img)
+            if sharp_edges:
+                drawn_image.fontmode = "1"
+            former_letters_width = 0
+            for char in letters:
+                drawn_image.text(xy=(former_letters_width, 1), text=char, font=font, fill="black")
+                drawn_image.point((former_letters_width, 0), (0, 255, 0,))
+                former_letters_width += get_text_dimensions(char, font)[0] + letter_spacing
+                drawn_image.point((former_letters_width - letter_spacing - 1, 0), (255, 0, 0,))
+            img.save(join(here, output_dir, f"{splitext(font_name)[0].split('/')[-1]}{font_size}.png"))

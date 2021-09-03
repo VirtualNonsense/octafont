@@ -112,22 +112,21 @@ def build_tables(img: Image.Image, bounds, y_pos, true_c: str, false_c: str):
 # ISO-8859-15
 def get_char_mapping(v):
     # Special supported characters from upper block
-    # if v == 0xc4: return 94  # Ä
-    # if v == 0xd6: return 95  # Ö
-    # if v == 0xdc: return 96  # Ü
-    # if v == 0xe4: return 97  # ä
-    # if v == 0xf6: return 98  # ö
-    # if v == 0xdf: return 99  # ß
-    # if v == 0xfc: return 100  # ü
-    # if v == 0xa4: return 101  # €
+    if v == 0xc4: return 94  # Ä
+    if v == 0xd6: return 95  # Ö
+    if v == 0xdc: return 96  # Ü
+    if v == 0xe4: return 97  # ä
+    if v == 0xf6: return 98  # ö
+    if v == 0xdf: return 99  # ß
+    if v == 0xfc: return 100  # ü
+    if v == 0xa4: return 101  # €
 
     # ASCII block (non control chars up to 127)
-    if 32 <= v <= 126:
-        return v - 32
+    if 33 <= v <= 126:
+        return v - 33
 
     # No mapping
     return -1
-
 
 
 if __name__ == '__main__':

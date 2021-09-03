@@ -62,7 +62,7 @@ if __name__ == '__main__':
         for font_size in font_sizes:
 
             # define letters to draw
-            letters = r" !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvxyz"
+            letters = r"!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvxyz"
 
             # script
             font = ImageFont.truetype(font_name, font_size)
